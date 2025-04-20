@@ -16,6 +16,14 @@ export interface DiscordBot {
   avatar?: string;
 }
 
+export interface DiscordGuild {
+  id: string;
+  name: string;
+  icon?: string;
+  permissions?: string;
+  features?: string[];
+}
+
 export interface DiscordGuildMember {
   id: string;
   username: string;

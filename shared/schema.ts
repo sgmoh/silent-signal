@@ -84,3 +84,46 @@ export type BulkDmRequest = z.infer<typeof bulkDmRequestSchema>;
 export type ValidateTokenRequest = z.infer<typeof validateTokenSchema>;
 export type GuildIdRequest = z.infer<typeof guildIdSchema>;
 export type MessageStatus = z.infer<typeof messageStatusSchema>;
+
+// Discord types
+export interface DiscordUser {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+  bot?: boolean;
+  system?: boolean;
+  banner?: string;
+  accent_color?: number;
+}
+
+export interface DiscordBot {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+}
+
+export interface DiscordGuild {
+  id: string;
+  name: string;
+  icon?: string;
+  permissions?: string;
+  features?: string[];
+}
+
+export interface DiscordGuildMember {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+  nickname?: string;
+  roles: string[];
+  joinedAt: string;
+}
+
+export interface BulkProgress {
+  current: number;
+  total: number;
+  inProgress: boolean;
+}

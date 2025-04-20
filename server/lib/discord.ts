@@ -1,6 +1,5 @@
 import fetch from "node-fetch";
-import { DiscordUser } from "@/types/discord";
-import type { DiscordGuildMember } from "@/types/discord";
+import type { DiscordUser, DiscordGuild, DiscordGuildMember } from "@shared/schema";
 
 // Discord API endpoints
 const DISCORD_API = "https://discord.com/api/v10";
@@ -100,6 +99,39 @@ export async function sendDiscordDM(
     }
   } catch (error) {
     console.error("Error sending Discord DM:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get a list of guilds (servers) the bot is a member of
+ */
+export async function getBotGuilds(
+  token: string
+): Promise<DiscordGuild[]> {
+  try {
+    const response = await fetch(`${DISCORD_API}/users/@me/guilds`, {
+      headers: {
+        Authorization: `Bot ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to fetch guilds: ${errorData.message || response.statusText}`);
+    }
+
+    const guilds = await response.json();
+    
+    return guilds.map((guild: any) => ({
+      id: guild.id,
+      name: guild.name,
+      icon: guild.icon,
+      permissions: guild.permissions,
+      features: guild.features
+    }));
+  } catch (error) {
+    console.error("Error fetching bot guilds:", error);
     throw error;
   }
 }

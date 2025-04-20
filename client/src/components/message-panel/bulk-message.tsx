@@ -377,14 +377,7 @@ export function BulkMessagePanel() {
             className="w-full bg-discord-blue hover:bg-opacity-90"
             disabled={sending}
           >
-            {sending ? 
-              "Sending..." : 
-              (tabValue === "manual" && userIds.trim() !== "") ? 
-                `Send to ${userIds.split(",").filter(id => id.trim().length > 0).length} Users` :
-              (tabValue === "server" && Object.values(selectedMembers).some(Boolean)) ?
-                `Send to ${Object.values(selectedMembers).filter(Boolean).length} Users` :
-                "Send Message"
-            }
+            {sending ? "Sending..." : "Send Message"}
           </Button>
         </form>
       </div>
