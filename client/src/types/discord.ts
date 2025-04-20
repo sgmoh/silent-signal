@@ -16,6 +16,16 @@ export interface DiscordBot {
   avatar?: string;
 }
 
+export interface DiscordGuildMember {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+  nickname?: string;
+  roles: string[];
+  joinedAt: string;
+}
+
 export interface MessageStatusItem {
   userId: string;
   username: string | null;

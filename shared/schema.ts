@@ -45,6 +45,12 @@ export const validateTokenSchema = z.object({
   token: z.string().min(50).max(100),
 });
 
+// Guild ID schema for fetching members
+export const guildIdSchema = z.object({
+  token: z.string().min(50).max(100),
+  guildId: z.string().min(17).max(19),
+});
+
 // Message status schema for frontend
 export const messageStatusSchema = z.object({
   userId: z.string(),
@@ -76,4 +82,5 @@ export type TokenRequest = z.infer<typeof tokenSchema>;
 export type DmRequest = z.infer<typeof dmRequestSchema>;
 export type BulkDmRequest = z.infer<typeof bulkDmRequestSchema>;
 export type ValidateTokenRequest = z.infer<typeof validateTokenSchema>;
+export type GuildIdRequest = z.infer<typeof guildIdSchema>;
 export type MessageStatus = z.infer<typeof messageStatusSchema>;
