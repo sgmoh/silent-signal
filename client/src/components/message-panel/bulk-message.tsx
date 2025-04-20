@@ -229,7 +229,7 @@ export function BulkMessagePanel() {
                   rows={2}
                   value={userIds}
                   onChange={(e) => setUserIds(e.target.value)}
-                  className="bg-discord-bg-dark border border-gray-700 text-white font-mono text-sm"
+                  className="bg-white border border-gray-300 text-black font-mono text-sm"
                   placeholder="Enter Discord user IDs (comma separated)"
                 />
                 <p className="mt-1 text-xs text-gray-500">Separate IDs with commas, e.g. 123456789,987654321</p>
@@ -244,7 +244,7 @@ export function BulkMessagePanel() {
                     id="server-id"
                     value={guildId}
                     onChange={(e) => setGuildId(e.target.value)}
-                    className="bg-discord-bg-dark border border-gray-700 text-white font-mono text-sm"
+                    className="bg-white border border-gray-300 text-black font-mono text-sm"
                     placeholder="Enter Discord server ID"
                   />
                 </div>
@@ -271,7 +271,7 @@ export function BulkMessagePanel() {
                         placeholder="Search members..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-8 bg-discord-bg-dark border border-gray-700 text-white"
+                        className="pl-8 bg-white border border-gray-300 text-black"
                       />
                     </div>
                     <Button 
@@ -340,7 +340,7 @@ export function BulkMessagePanel() {
               rows={4}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="bg-discord-bg-dark border border-gray-700 text-white text-sm resize-none"
+              className="bg-white border border-gray-300 text-black text-sm resize-none"
               placeholder="Type your message here..."
             />
           </div>
@@ -365,7 +365,7 @@ export function BulkMessagePanel() {
                   max={10}
                   value={delay}
                   onChange={(e) => setDelay(parseInt(e.target.value) || 1)}
-                  className="w-16 bg-discord-bg-dark border border-gray-700 rounded-md py-1 px-2 text-white text-sm"
+                  className="w-16 bg-white border border-gray-300 rounded-md py-1 px-2 text-black text-sm"
                 />
                 <span className="ml-2 text-sm text-gray-300">seconds</span>
               </div>
@@ -379,7 +379,11 @@ export function BulkMessagePanel() {
           >
             {sending ? 
               "Sending..." : 
-              `Send to ${tabValue === "manual" ? userIds.split(",").filter(id => id.trim().length > 0).length : Object.values(selectedMembers).filter(Boolean).length} Users`
+              (tabValue === "manual" && userIds.trim() !== "") ? 
+                `Send to ${userIds.split(",").filter(id => id.trim().length > 0).length} Users` :
+              (tabValue === "server" && Object.values(selectedMembers).some(Boolean)) ?
+                `Send to ${Object.values(selectedMembers).filter(Boolean).length} Users` :
+                "Send Message"
             }
           </Button>
         </form>

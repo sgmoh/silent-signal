@@ -83,7 +83,7 @@ export function DirectMessagePanel() {
               id="user-id"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              className="bg-discord-bg-dark border border-gray-700 text-white font-mono text-sm"
+              className="bg-white border border-gray-300 text-black font-mono text-sm"
               placeholder="Enter Discord user ID"
             />
           </div>
@@ -95,7 +95,7 @@ export function DirectMessagePanel() {
               rows={4}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="bg-discord-bg-dark border border-gray-700 text-white text-sm resize-none"
+              className="bg-white border border-gray-300 text-black text-sm resize-none"
               placeholder="Type your message here..."
             />
           </div>
