@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { validateDiscordToken, sendDiscordDM, getUserInfo, getGuildMembers } from "./lib/discord";
+import { validateDiscordToken, sendDiscordDM, getUserInfo, getGuildMembers, getBotGuilds } from "./lib/discord";
 import { z } from "zod";
 import { dmRequestSchema, bulkDmRequestSchema, validateTokenSchema, messageStatusSchema, guildIdSchema } from "@shared/schema";
 
@@ -189,6 +189,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid request format", errors: error.errors });
       }
       return res.status(500).json({ message: "Failed to process bulk messages" });
+    }
+  });
+
+  // Get bot guilds (servers)
+  app.post("/api/discord/guilds", async (req, res) => {
+    try {
+      const { token } = validateTokenSchema.parse(req.body);
+      
+      // First validate the token
+      const isValidToken = await validateDiscordToken(token);
+      if (!isValidToken) {
+        return res.status(401).json({ message: "Invalid bot token" });
+      }
+      
+      try {
+        const guilds = await getBotGuilds(token);
+        return res.json({ guilds });
+      } catch (error) {
+        console.error("Error fetching bot guilds:", error);
+        return res.status(500).json({ 
+          message: error instanceof Error ? error.message : "Failed to fetch bot guilds" 
+        });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request format", errors: error.errors });
+      }
+      return res.status(500).json({ message: "Server error" });
     }
   });
 

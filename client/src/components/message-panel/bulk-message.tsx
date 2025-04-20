@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useStatus } from "@/lib/status-context";
-import { sendBulkMessages, getGuildMembers } from "@/lib/discord";
+import { sendBulkMessages, getGuildMembers, getGuilds } from "@/lib/discord";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DiscordGuildMember } from "@/types/discord";
-import { Loader2, Search, Users, User } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DiscordGuildMember, DiscordGuild } from "@/types/discord";
+import { Loader2, Search, Users, User, ServerIcon } from "lucide-react";
 
 export function BulkMessagePanel() {
   const [userIds, setUserIds] = useState("");
@@ -25,6 +26,8 @@ export function BulkMessagePanel() {
   // Server members selection states
   const [guildId, setGuildId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingGuilds, setLoadingGuilds] = useState(false);
+  const [guilds, setGuilds] = useState<DiscordGuild[]>([]);
   const [members, setMembers] = useState<DiscordGuildMember[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +40,33 @@ export function BulkMessagePanel() {
     endBulkProgress 
   } = useStatus();
   const { toast } = useToast();
+  
+  // Fetch guilds when token is available
+  useEffect(() => {
+    if (token && tabValue === "server") {
+      fetchGuilds();
+    }
+  }, [token, tabValue]);
+  
+  // Fetch bot's guilds
+  const fetchGuilds = async () => {
+    if (!token) return;
+    
+    setLoadingGuilds(true);
+    try {
+      const guildList = await getGuilds(token);
+      setGuilds(guildList);
+    } catch (error) {
+      console.error("Error fetching guilds:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to load servers",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingGuilds(false);
+    }
+  };
 
   // Load server members
   const handleLoadMembers = async () => {
@@ -239,20 +269,47 @@ export function BulkMessagePanel() {
             <TabsContent value="server" className="space-y-4">
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <Label htmlFor="server-id" className="text-gray-300 mb-1">Server ID</Label>
-                  <Input
-                    id="server-id"
-                    value={guildId}
-                    onChange={(e) => setGuildId(e.target.value)}
-                    className="bg-white border border-gray-300 text-black font-mono text-sm"
-                    placeholder="Enter Discord server ID"
-                  />
+                  <Label htmlFor="server-select" className="text-gray-300 mb-1">Select Server</Label>
+                  {loadingGuilds ? (
+                    <div className="flex items-center space-x-2 text-sm text-gray-400 mt-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Loading servers...</span>
+                    </div>
+                  ) : guilds.length > 0 ? (
+                    <Select 
+                      value={guildId} 
+                      onValueChange={(value) => {
+                        setGuildId(value);
+                        setMembers([]);
+                        setSelectedMembers({});
+                      }}
+                    >
+                      <SelectTrigger className="w-full bg-white text-black">
+                        <SelectValue placeholder="Choose a server" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {guilds.map(guild => (
+                          <SelectItem key={guild.id} value={guild.id} className="text-black">
+                            {guild.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : token ? (
+                    <div className="text-sm text-gray-400 mt-2">
+                      No servers found. Your bot may not be in any servers.
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-400 mt-2">
+                      Please authenticate with your bot token first.
+                    </div>
+                  )}
                 </div>
                 <div className="pt-6">
                   <Button 
                     type="button" 
                     onClick={handleLoadMembers}
-                    disabled={loading || !token}
+                    disabled={loading || !guildId || !token}
                     variant="outline"
                     className="h-10"
                   >
