@@ -1,0 +1,10 @@
+{
+  "monitors": [
+    {
+      "friendly_name": "Silent Signal - Health Check",
+      "url": "https://silent-signal.onrender.com/api/health",
+      "type": 1,
+      "interval": 300
+    }
+  ]
+}

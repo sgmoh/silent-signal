@@ -57,7 +57,37 @@ npm run dev
 
 ## Deployment
 
-The application is configured for easy deployment on Replit.
+### Deploying to Render
+
+The application is configured for easy deployment on Render:
+
+1. Fork/clone this repository to your GitHub account
+2. Log in to [Render](https://render.com)
+3. Click "New" and select "Web Service"
+4. Connect your GitHub repository
+5. Use the following settings:
+   - Name: `silent-signal` (or your preferred name)
+   - Environment: `Node`
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm start`
+6. Add the environment variable:
+   - Key: `DATABASE_URL`
+   - Value: Your PostgreSQL connection string
+
+Render will automatically build and deploy your application.
+
+### Setting Up UptimeRobot Monitoring
+
+To ensure your application stays running:
+
+1. Create an account on [UptimeRobot](https://uptimerobot.com)
+2. Add a new monitor:
+   - Monitor Type: `HTTP(s)`
+   - Friendly Name: `Silent Signal - Health Check`
+   - URL: `https://your-app-name.onrender.com/api/health`
+   - Monitoring Interval: 5 minutes
+
+This will ping your application regularly to keep it active and alert you if it goes down.
 
 ## License
 

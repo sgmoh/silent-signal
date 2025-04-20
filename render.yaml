@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: silent-signal
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # This means you'll need to set it in the Render dashboard
+    healthCheckPath: /api/health

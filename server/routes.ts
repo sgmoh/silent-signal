@@ -6,6 +6,10 @@ import { z } from "zod";
 import { dmRequestSchema, bulkDmRequestSchema, validateTokenSchema, messageStatusSchema, guildIdSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for monitoring
+  app.get("/api/health", (req, res) => {
+    return res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
   // Discord token validation
   app.post("/api/discord/validate-token", async (req, res) => {
     try {
