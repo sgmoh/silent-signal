@@ -4,6 +4,18 @@ import type { DiscordUser, DiscordGuild, DiscordGuildMember } from "@shared/sche
 // Discord API endpoints
 const DISCORD_API = "https://discord.com/api/v10";
 
+// Type definitions for Discord API responses
+interface DiscordErrorResponse {
+  message?: string;
+  code?: number;
+}
+
+interface DiscordChannelResponse {
+  id: string;
+  type: number;
+  recipients?: { id: string; username: string }[];
+}
+
 /**
  * Validates a Discord bot token by attempting to get the bot's information
  */
@@ -19,7 +31,7 @@ export async function validateDiscordToken(token: string): Promise<boolean> {
       return false;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { bot?: boolean };
     // Verify that the token belongs to a bot
     return data.bot === true;
   } catch (error) {
@@ -76,11 +88,11 @@ export async function sendDiscordDM(
     });
 
     if (!channelResponse.ok) {
-      const errorData = await channelResponse.json();
+      const errorData = await channelResponse.json() as DiscordErrorResponse;
       throw new Error(`Failed to create DM channel: ${errorData.message || channelResponse.statusText}`);
     }
 
-    const channelData = await channelResponse.json();
+    const channelData = await channelResponse.json() as DiscordChannelResponse;
     const channelId = channelData.id;
 
     // Step 2: Send message to the DM channel
@@ -94,7 +106,7 @@ export async function sendDiscordDM(
     });
 
     if (!messageResponse.ok) {
-      const errorData = await messageResponse.json();
+      const errorData = await messageResponse.json() as DiscordErrorResponse;
       throw new Error(`Failed to send message: ${errorData.message || messageResponse.statusText}`);
     }
   } catch (error) {
@@ -117,13 +129,13 @@ export async function getBotGuilds(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json() as DiscordErrorResponse;
       throw new Error(`Failed to fetch guilds: ${errorData.message || response.statusText}`);
     }
 
-    const guilds = await response.json();
+    const guilds = await response.json() as any[];
     
-    return guilds.map((guild: any) => ({
+    return guilds.map((guild) => ({
       id: guild.id,
       name: guild.name,
       icon: guild.icon,
@@ -151,16 +163,16 @@ export async function getGuildMembers(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json() as DiscordErrorResponse;
       throw new Error(`Failed to fetch guild members: ${errorData.message || response.statusText}`);
     }
 
-    const members = await response.json();
+    const members = await response.json() as any[];
     
     // Filter out bots and format the member data
     return members
-      .filter((member: any) => !member.user.bot)
-      .map((member: any) => ({
+      .filter((member) => !member.user.bot)
+      .map((member) => ({
         id: member.user.id,
         username: member.user.username,
         discriminator: member.user.discriminator,
