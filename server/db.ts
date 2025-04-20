@@ -5,11 +5,8 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+// Use the provided PostgreSQL connection string directly
+const connectionString = "postgresql://neondb_owner:npg_ECmjIl5iPnK2@ep-holy-bread-a4m4upgd-pooler.us-east-1.aws.neon.tech/silent?sslmode=require";
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const pool = new Pool({ connectionString });
 export const db = drizzle({ client: pool, schema });
