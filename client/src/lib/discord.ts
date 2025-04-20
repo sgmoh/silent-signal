@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import { MessageStatusItem } from "../types/discord";
+import { MessageStatusItem, DiscordGuildMember } from "../types/discord";
 
 // Validate bot token
 export async function validateBotToken(token: string): Promise<boolean> {
@@ -100,5 +100,24 @@ export async function sendBulkMessages(
       error: error instanceof Error ? error.message : "Unknown error",
       timestamp: new Date()
     }));
+  }
+}
+
+// Get guild members
+export async function getGuildMembers(
+  token: string,
+  guildId: string
+): Promise<DiscordGuildMember[]> {
+  try {
+    const response = await apiRequest("POST", "/api/discord/guild-members", {
+      token,
+      guildId,
+    });
+    
+    const data = await response.json();
+    return data.members;
+  } catch (error) {
+    console.error("Error fetching guild members:", error);
+    throw error;
   }
 }
