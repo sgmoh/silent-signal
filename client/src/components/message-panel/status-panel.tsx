@@ -17,8 +17,13 @@ export function StatusPanel() {
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (date: Date | string) => {
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    return date instanceof Date && !isNaN(date.getTime())
+      ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : 'Invalid time';
   };
 
   return (

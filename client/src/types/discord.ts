@@ -22,7 +22,7 @@ export interface MessageStatusItem {
   message: string;
   success: boolean;
   error?: string;
-  timestamp: Date;
+  timestamp: Date | string;
 }
 
 export interface BulkProgress {
