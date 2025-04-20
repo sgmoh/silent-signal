@@ -1,0 +1,32 @@
+export interface DiscordUser {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+  bot?: boolean;
+  system?: boolean;
+  banner?: string;
+  accent_color?: number;
+}
+
+export interface DiscordBot {
+  id: string;
+  username: string;
+  discriminator?: string;
+  avatar?: string;
+}
+
+export interface MessageStatusItem {
+  userId: string;
+  username: string | null;
+  message: string;
+  success: boolean;
+  error?: string;
+  timestamp: Date;
+}
+
+export interface BulkProgress {
+  current: number;
+  total: number;
+  inProgress: boolean;
+}
